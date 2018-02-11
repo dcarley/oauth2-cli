@@ -11,6 +11,17 @@ import (
 	"golang.org/x/oauth2"
 )
 
+type Scopes []string
+
+func (s *Scopes) String() string {
+	return fmt.Sprintf("%s", *s)
+}
+
+func (s *Scopes) Set(value string) error {
+	*s = append(*s, value)
+	return nil
+}
+
 func main() {
 	var (
 		port         = flag.Int("port", 8080, "Callback port")
@@ -19,14 +30,15 @@ func main() {
 		clientSecret = flag.String("secret", "", "Client secret")
 		authURL      = flag.String("auth", "https://localhost/oauth/authorize", "Authorization URL")
 		tokenURL     = flag.String("token", "https://localhost/oauth/token", "Token URL")
-		scope        = flag.String("scope", "", "Scopes to authorize")
+		scopes       Scopes
 	)
+	flag.Var(&scopes, "scope", "oAuth scopes to authorize (can be specified multiple times")
 	flag.Parse()
 
 	config := &oauth2.Config{
 		ClientID:     *clientID,
 		ClientSecret: *clientSecret,
-		Scopes:       []string{*scope},
+		Scopes:       scopes,
 		RedirectURL:  fmt.Sprintf("http://127.0.0.1:%d%s", *port, *path),
 		Endpoint: oauth2.Endpoint{
 			AuthURL:  *authURL,

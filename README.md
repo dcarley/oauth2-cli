@@ -36,3 +36,16 @@ Run with all of the necessary arguments, for example:
     ^C when finished.
 
 Then follow the instructions in the CLI and subsequently your browser.
+
+## Scopes
+
+Multiple scopes can be given by specifying the argument multiple times:
+
+    -scope read \
+    -scope write \
+
+Some services are lenient with their interpretation of the OAuth
+specification so you will need to specify multiple scopes as a single comma
+separated argument:
+
+    -scope write,view_private

@@ -147,4 +147,29 @@ Response: bad things happened
 			Eventually(session).Should(gexec.Exit(143))
 		})
 	})
+
+	Describe("multiple scope arguments", func() {
+		BeforeEach(func() {
+			args = []string{
+				"-scope", "public",
+				"-scope", "private",
+			}
+		})
+
+		It("should space separate them in auth URL", func() {
+			Expect(authURL.Query().Get("scope")).To(Equal("public private"))
+		})
+	})
+
+	Describe("comma separated scope argument", func() {
+		BeforeEach(func() {
+			args = []string{
+				"-scope", "public,private",
+			}
+		})
+
+		It("should comma separate them in auth URL", func() {
+			Expect(authURL.Query().Get("scope")).To(Equal("public,private"))
+		})
+	})
 })
