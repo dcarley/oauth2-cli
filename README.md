@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/dcarley/oauth2-cli.svg?branch=master)](https://travis-ci.org/dcarley/oauth2-cli)
+
 # oauth2-cli
 
 This is a small command line utility to get an OAuth access token for
