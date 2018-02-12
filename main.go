@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"sync"
 
 	"golang.org/x/oauth2"
 )
@@ -57,10 +58,14 @@ func main() {
 	state := randString()
 	url := config.AuthCodeURL(state, oauth2.AccessTypeOffline)
 	fmt.Printf("Visit this URL in your browser:\n\n%s\n\n", url)
-	fmt.Print("^C when finished.\n")
 
 	ctx := context.Background()
+	var wg sync.WaitGroup
+	wg.Add(1)
+
 	http.HandleFunc(*path, func(w http.ResponseWriter, r *http.Request) {
+		defer wg.Done()
+
 		if s := r.URL.Query().Get("state"); s != state {
 			http.Error(w, fmt.Sprintf("Invalid state: %s", s), http.StatusUnauthorized)
 			return
@@ -82,6 +87,18 @@ func main() {
 		w.Write(tokenJSON)
 	})
 
-	addr := fmt.Sprintf(":%d", *port)
-	log.Fatalln(http.ListenAndServe(addr, nil))
+	server := http.Server{
+		Addr: fmt.Sprintf(":%d", *port),
+	}
+
+	go func() {
+		if err := server.ListenAndServe(); err != http.ErrServerClosed {
+			log.Fatalln(err)
+		}
+	}()
+
+	wg.Wait()
+	if err := server.Shutdown(ctx); err != nil {
+		log.Fatalln(err)
+	}
 }

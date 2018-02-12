@@ -116,8 +116,7 @@ var _ = Describe("Main", func() {
   "expiry": "0001-01-01T00:00:00Z"
 }`, expectedToken)))
 
-			gexec.Terminate()
-			Eventually(session).Should(gexec.Exit(143))
+			Eventually(session).Should(gexec.Exit(0))
 		})
 	})
 
@@ -139,8 +138,7 @@ var _ = Describe("Main", func() {
 			Expect(resp.StatusCode).To(Equal(http.StatusUnauthorized), "got body: %s", body)
 			Expect(string(body)).To(Equal("Invalid state: tampered with\n"))
 
-			gexec.Terminate()
-			Eventually(session).Should(gexec.Exit(143))
+			Eventually(session).Should(gexec.Exit(0))
 		})
 	})
 
@@ -175,8 +173,7 @@ var _ = Describe("Main", func() {
 Response: bad things happened
 `))
 
-			gexec.Terminate()
-			Eventually(session).Should(gexec.Exit(143))
+			Eventually(session).Should(gexec.Exit(0))
 		})
 	})
 
