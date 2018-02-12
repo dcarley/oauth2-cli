@@ -73,6 +73,10 @@ var _ = Describe("Main", func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
+	AfterEach(func() {
+		gexec.TerminateAndWait()
+	})
+
 	Describe("successful token exchange", func() {
 		const (
 			expectedToken = "mytoken"
