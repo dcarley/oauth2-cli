@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"crypto/rand"
+	"encoding/base64"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -20,6 +22,12 @@ func (s *Scopes) String() string {
 func (s *Scopes) Set(value string) error {
 	*s = append(*s, value)
 	return nil
+}
+
+func randString() string {
+	buf := make([]byte, 32)
+	rand.Read(buf)
+	return base64.StdEncoding.EncodeToString(buf)
 }
 
 func main() {
@@ -46,12 +54,18 @@ func main() {
 		},
 	}
 
-	url := config.AuthCodeURL("state", oauth2.AccessTypeOffline)
+	state := randString()
+	url := config.AuthCodeURL(state, oauth2.AccessTypeOffline)
 	fmt.Printf("Visit this URL in your browser:\n\n%s\n\n", url)
 	fmt.Print("^C when finished.\n")
 
 	ctx := context.Background()
 	http.HandleFunc(*path, func(w http.ResponseWriter, r *http.Request) {
+		if s := r.URL.Query().Get("state"); s != state {
+			http.Error(w, fmt.Sprintf("Invalid state: %s", s), http.StatusUnauthorized)
+			return
+		}
+
 		code := r.URL.Query().Get("code")
 		token, err := config.Exchange(ctx, code)
 		if err != nil {

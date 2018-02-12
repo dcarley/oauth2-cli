@@ -33,7 +33,7 @@ Run with all of the necessary arguments, for example:
 
     Visit this URL in your browser:
 
-    https://www.strava.com/oauth/authorize?access_type=offline&client_id=REDACTED&redirect_uri=http%3A%2F%2F127.0.0.1%3A8080%2Foauth%2Fcallback&response_type=code&scope=view_private&state=state
+    https://www.strava.com/oauth/authorize?access_type=offline&client_id=REDACTED&redirect_uri=http%3A%2F%2F127.0.0.1%3A8080%2Foauth%2Fcallback&response_type=code&scope=view_private&state=REDACTED
 
     ^C when finished.
 

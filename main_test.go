@@ -96,6 +96,7 @@ var _ = Describe("Main", func() {
 
 			params := callbackURL.Query()
 			params.Set("code", expectedCode)
+			params.Set("state", authURL.Query().Get("state"))
 			callbackURL.RawQuery = params.Encode()
 
 			resp, err := http.Get(callbackURL.String())
@@ -110,6 +111,29 @@ var _ = Describe("Main", func() {
   "token_type": "Bearer",
   "expiry": "0001-01-01T00:00:00Z"
 }`, expectedToken)))
+
+			gexec.Terminate()
+			Eventually(session).Should(gexec.Exit(143))
+		})
+	})
+
+	Describe("invalid CSRF state", func() {
+		It("should output error", func() {
+			callbackURL, err := url.Parse(authURL.Query().Get("redirect_uri"))
+			Expect(err).ToNot(HaveOccurred())
+
+			params := callbackURL.Query()
+			params.Set("state", "tampered with")
+			callbackURL.RawQuery = params.Encode()
+
+			resp, err := http.Get(callbackURL.String())
+			Expect(err).ToNot(HaveOccurred())
+			defer resp.Body.Close()
+
+			body, err := ioutil.ReadAll(resp.Body)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(resp.StatusCode).To(Equal(http.StatusUnauthorized), "got body: %s", body)
+			Expect(string(body)).To(Equal("Invalid state: tampered with\n"))
 
 			gexec.Terminate()
 			Eventually(session).Should(gexec.Exit(143))
@@ -131,6 +155,10 @@ var _ = Describe("Main", func() {
 		It("should output error", func() {
 			callbackURL, err := url.Parse(authURL.Query().Get("redirect_uri"))
 			Expect(err).ToNot(HaveOccurred())
+
+			params := callbackURL.Query()
+			params.Set("state", authURL.Query().Get("state"))
+			callbackURL.RawQuery = params.Encode()
 
 			resp, err := http.Get(callbackURL.String())
 			Expect(err).ToNot(HaveOccurred())
