@@ -1,0 +1,10 @@
+version: 2
+jobs:
+  build:
+    working_directory: /go/src/github.com/dcarley/oauth2-cli
+    docker:
+      - image: circleci/golang:1.10
+    steps:
+      - checkout
+      - run: go get -v -t -d ./...
+      - run: go test -v ./...

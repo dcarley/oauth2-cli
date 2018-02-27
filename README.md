@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/dcarley/oauth2-cli.svg?branch=master)](https://travis-ci.org/dcarley/oauth2-cli)
+[![CircleCI](https://circleci.com/gh/dcarley/oauth2-cli.svg?style=svg)](https://circleci.com/gh/dcarley/oauth2-cli)
 
 # oauth2-cli
 
