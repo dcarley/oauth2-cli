@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"crypto/rand"
-	"encoding/base64"
+	"encoding/hex"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -28,7 +28,7 @@ func (s *Scopes) Set(value string) error {
 func randString() string {
 	buf := make([]byte, 32)
 	rand.Read(buf)
-	return base64.StdEncoding.EncodeToString(buf)
+	return hex.EncodeToString(buf)
 }
 
 func main() {
